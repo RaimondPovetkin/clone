@@ -47,16 +47,16 @@ import { ref } from 'vue';
 function selectPage(el) {
   currentView.value = el.name
 }
-const currentView = ref('table')
+const currentView = ref('kanban')
 const viewItems = ref([
   {
     badge: null,
-    name: 'table',
+    name: 'kanban',
     id:1
   },
   {
     badge: null,
-    name: 'kanban',
+    name: 'table',
     id:2
   }
 ])

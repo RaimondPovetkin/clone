@@ -4,15 +4,10 @@
       <div class="q-pa-md">
         <transition name="slide-fade">
           <div class="row justify-between" v-if="view == 'kanban'">
-          <OrdersGrid :data="data"></OrdersGrid>
+            <OrdersGrid :data="data"></OrdersGrid>
           </div>
           <div v-else>
-            <q-table
-              :pagination="{ rowsPerPage: 100 }"
-              :rows="data"
-              row-key="text"
-              flat bordered
-            />
+            <OrdersTable></OrdersTable>
           </div>
         </transition>
       </div>
@@ -23,6 +18,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import OrdersGrid from './OrdersGrid.vue';
+import OrdersTable from './OrdersTable.vue';
 
 
 

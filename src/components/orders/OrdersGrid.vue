@@ -40,7 +40,7 @@ const deserts = ref([
 
 
 onMounted(() => {
-  console.log('33333')
+  //console.log('33333')
 
   deserts.value.forEach(name => {
   for (let i = 0; i < 24; i++) {

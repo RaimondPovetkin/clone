@@ -12,6 +12,7 @@
           </div>
           <ButtonToggleVue
             color="#302088"
+            :first-element="currentRouteID"
             :initionArr="menuItems"
             @select="selectPage"
           ></ButtonToggleVue>
@@ -85,7 +86,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 //import EssentialLink, { EssentialLinkProps } from 'components/EssentialLink.vue';
 import ButtonToggleVue from '../components/UI/ButtonToggle.vue';
 import {useRouter} from 'vue-router'
@@ -157,6 +158,14 @@ const menuItems = ref([
     id:3
   },
 ])
+
+const currentRouteID = computed(() => {
+  let currentMenuItem = menuItems.value.find(item=>router.currentRoute.value.path.indexOf(item.path) > 0)
+  if(currentMenuItem){
+    return currentMenuItem.id
+  }
+    return 0
+  })
 
 function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value

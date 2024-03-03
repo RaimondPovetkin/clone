@@ -22,7 +22,7 @@
 
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted,watch } from "vue";
 import { ButtonGroupItems } from '.././models';
 
 const selector = ref(null);
@@ -36,21 +36,30 @@ onMounted(() => {
   currentColor.value = props.color
 
 
-sizeOffset.value = selector.value.getBoundingClientRect().left - buttonsRow.value.offsetLeft
+  const currentId = props.initionArr.findIndex(i=>i.id == props.firstElement)
 
 
+  let childrenItem = buttonsRow.value.children[0].children[currentId]
 
-  selector.value.style.left = buttonsRow.value.getBoundingClientRect().left - sizeOffset.value + 'px';
-  const childrenItem = buttonsRow.value.children[0]
-  selector.value.style.width = childrenItem.children[0].offsetWidth + 'px'
-  selector.value.style.height = childrenItem.children[0].offsetHeight + 'px'
+  selector.value.style.width = childrenItem.offsetWidth + 'px'
+  selector.value.style.height = childrenItem.offsetHeight + 'px'
   selector.value.style.visibility = 'hidden'
 
-  selectedValue.value = props.initionArr[0]
+
+
+
+  selectedValue.value = props.initionArr[currentId]
+  sizeOffset.value = selector.value.getBoundingClientRect().left - buttonsRow.value.offsetLeft
+  selector.value.style.left = childrenItem.getBoundingClientRect().left - sizeOffset.value + 'px';
 })
 
 
 const props = defineProps({
+  firstElement: {
+    type: Number,
+    required: false,
+    default: 1
+  },
   initionArr: {
     type: Array,
     required: true

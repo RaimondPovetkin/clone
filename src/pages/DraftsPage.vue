@@ -1,62 +1,41 @@
 <template>
-  <q-page :style-fn="()=>{}">
+  <q-page :style-fn="()=>{}" style="height: 100%;">
+
+    <q-scroll-area style="width: 100%; height: 100%;">
+    <q-markup-table separator="cell">
+      <thead>
+        <tr>
+          <th class="text-left">Dessert (100g serving)</th>
+          <th class="text-right">Calories</th>
+          <th class="text-right">Fat (g)</th>
+          <th class="text-right">Carbs (g)</th>
+          <th class="text-right">Protein (g)</th>
+          <th class="text-right">Sodium (mg)</th>
+        </tr>
+      </thead>
+      <tbody>
+          <TableItem @addItem="addItem" v-for="(item, index) in rows" :key=index :item="item" :level="0"></TableItem>
+      </tbody>
+    </q-markup-table>
+  </q-scroll-area>
 
 
-    <q-table
-      flat bordered
-      title="Treats"
-      :rows="rows"
-      :columns="columns"
-      row-key="name"
-    >
 
-      <template v-slot:header="props">
-        <q-tr :props="props">
-          <q-th auto-width />
-          <q-th
-            v-for="col in props.cols"
-            :key="col.name"
-            :props="props"
-          >
-            {{ col.label }}
-          </q-th>
-        </q-tr>
-      </template>
 
-      <template v-slot:body="props">
-        <q-tr :props="props">
-          <q-td auto-width v-if="props.row.children">
-            <q-btn size="sm" color="accent" round dense @click="props.expand = !props.expand" :icon="props.expand ? 'remove' : 'add'" />
-          </q-td>
-          <q-td
-            v-for="col in props.cols"
-            :key="col.name"
-            :props="props"
-          >
-            {{ col.value }}
-          </q-td>
-        </q-tr>
-        <q-tr v-show="props.expand" :props="props">
-          <q-td colspan="100%" style="padding: 0 !important;" v-if="props.row.children">
 
-            <q-table
-            flat bordered
-            :rows="rows"
-            :columns="columns"
-            row-key="name"
-          />
-          </q-td>
-        </q-tr>
-      </template>
 
-    </q-table>
+
 
   </q-page>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import TableItem from 'src/components/table/TableItem.vue';
 
+function addItem(item){
+  console.log(item)
+}
 
 const columns = ref([
   {
@@ -96,7 +75,73 @@ const rows = ref([
     protein: 4.3,
     sodium: 129,
     calcium: '8%',
-    iron: '1%'
+    iron: '1%',
+    subItems:[
+      {
+      name: 'Eclair',
+      calories: 262,
+      fat: 16.0,
+      carbs: 23,
+      protein: 6.0,
+      sodium: 337,
+      calcium: '6%',
+      iron: '7%',
+      children: 10
+    },
+    {
+      name: 'Cupcake',
+      calories: 305,
+      fat: 3.7,
+      carbs: 67,
+      protein: 4.3,
+      sodium: 413,
+      calcium: '3%',
+      iron: '8%'
+    },
+    {
+      name: 'Gingerbread',
+      calories: 356,
+      fat: 16.0,
+      carbs: 49,
+      protein: 3.9,
+      sodium: 327,
+      calcium: '7%',
+      iron: '16%',
+      subItems:[
+        {
+          name: 'Eclair',
+          calories: 262,
+          fat: 16.0,
+          carbs: 23,
+          protein: 6.0,
+          sodium: 337,
+          calcium: '6%',
+          iron: '7%',
+          children: 10
+        },
+        {
+          name: 'Cupcake',
+          calories: 305,
+          fat: 3.7,
+          carbs: 67,
+          protein: 4.3,
+          sodium: 413,
+          calcium: '3%',
+          iron: '8%'
+        },
+        {
+          name: 'Gingerbread',
+          calories: 356,
+          fat: 16.0,
+          carbs: 49,
+          protein: 3.9,
+          sodium: 327,
+          calcium: '7%',
+          iron: '16%'
+        }
+      ]
+    }
+    ]
   },
   {
     name: 'Eclair',

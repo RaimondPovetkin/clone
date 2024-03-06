@@ -1,5 +1,5 @@
 <template>
-  <q-page :style-fn="()=>{}" style="height: 100%;">
+  <q-page :style-fn="()=>{}" style="height: 100%;">{{ hidedItems }}
 
     <q-scroll-area style="width: 100%; height: 100%;">
     <q-markup-table separator="cell">
@@ -13,19 +13,11 @@
           <th class="text-right">Sodium (mg)</th>
         </tr>
       </thead>
-      <tbody>
-          <TableItem @addItem="addItem" v-for="(item, index) in rows" :key=index :item="item" :level="0"></TableItem>
+      <tbody style="transition: all 1s;">
+          <TableItem @removeItem="removeItem" @addItem="addItem" v-for="(item, index) in rows" :key=index :hidedItems=hidedItems :item="item" :level="0"></TableItem>
       </tbody>
     </q-markup-table>
   </q-scroll-area>
-
-
-
-
-
-
-
-
   </q-page>
 </template>
 
@@ -33,8 +25,67 @@
 import { ref } from 'vue';
 import TableItem from 'src/components/table/TableItem.vue';
 
+
+const hidedItems = ref([])
+
+function recourseFindItem(items, id){
+  for(let i in items){
+    if(items[i].id === id){
+      console.log('ura')
+      return items[i]
+    } else if (items[i].subItems){
+      const findedItem = recourseFindItem(items[i].subItems, id)
+      if(findedItem){
+        return findedItem
+      }
+    }
+
+  }
+
+}
+
+function removeItem(item){
+  if(!hidedItems.value.find(i=>i === item.id)){
+    hidedItems.value.push(item.id)
+  }
+  let foundItem = recourseFindItem(rows.value, item.id)
+  foundItem.isHided = true
+}
+
 function addItem(item){
-  console.log(item)
+  //hidedItems.value = hidedItems.value.filter(i=>i !== item.id)
+  let foundItem = recourseFindItem(rows.value, item.id)
+  delete foundItem.isHided;
+  if(foundItem && !hidedItems.value.find(i=>i === item.id)){
+    setTimeout(()=>{
+      foundItem.subItems=[
+      {
+        name: 'Lollipop',
+        calories: 392,
+        fat: 0.2,
+        carbs: 98,
+        protein: 0,
+        sodium: 38,
+        calcium: '0%',
+        iron: '2%',
+        id: Math.floor(Math.random() * 9998) + 2,
+        canExpand: true,
+      },
+      {
+        name: 'Honeycomb',
+        calories: 408,
+        fat: 3.2,
+        carbs: 87,
+        protein: 6.5,
+        sodium: 562,
+        calcium: '0%',
+        iron: '45%',
+        id: Math.floor(Math.random() * 9998) + 2,
+        canExpand: true,
+      },
+      ]
+    },2000)
+  }
 }
 
 const columns = ref([
@@ -65,7 +116,9 @@ const rows = ref([
     protein: 4.0,
     sodium: 87,
     calcium: '14%',
-    iron: '1%'
+    iron: '1%',
+    id: 1,
+    canExpand: true,
   },
   {
     name: 'Ice cream sandwich',
@@ -76,72 +129,8 @@ const rows = ref([
     sodium: 129,
     calcium: '8%',
     iron: '1%',
-    subItems:[
-      {
-      name: 'Eclair',
-      calories: 262,
-      fat: 16.0,
-      carbs: 23,
-      protein: 6.0,
-      sodium: 337,
-      calcium: '6%',
-      iron: '7%',
-      children: 10
-    },
-    {
-      name: 'Cupcake',
-      calories: 305,
-      fat: 3.7,
-      carbs: 67,
-      protein: 4.3,
-      sodium: 413,
-      calcium: '3%',
-      iron: '8%'
-    },
-    {
-      name: 'Gingerbread',
-      calories: 356,
-      fat: 16.0,
-      carbs: 49,
-      protein: 3.9,
-      sodium: 327,
-      calcium: '7%',
-      iron: '16%',
-      subItems:[
-        {
-          name: 'Eclair',
-          calories: 262,
-          fat: 16.0,
-          carbs: 23,
-          protein: 6.0,
-          sodium: 337,
-          calcium: '6%',
-          iron: '7%',
-          children: 10
-        },
-        {
-          name: 'Cupcake',
-          calories: 305,
-          fat: 3.7,
-          carbs: 67,
-          protein: 4.3,
-          sodium: 413,
-          calcium: '3%',
-          iron: '8%'
-        },
-        {
-          name: 'Gingerbread',
-          calories: 356,
-          fat: 16.0,
-          carbs: 49,
-          protein: 3.9,
-          sodium: 327,
-          calcium: '7%',
-          iron: '16%'
-        }
-      ]
-    }
-    ]
+    id: 2,
+    canExpand: false,
   },
   {
     name: 'Eclair',
@@ -152,7 +141,9 @@ const rows = ref([
     sodium: 337,
     calcium: '6%',
     iron: '7%',
-    children: 10
+    children: 10,
+    id: 9,
+    canExpand: false,
   },
   {
     name: 'Cupcake',
@@ -162,7 +153,9 @@ const rows = ref([
     protein: 4.3,
     sodium: 413,
     calcium: '3%',
-    iron: '8%'
+    iron: '8%',
+    id: 10,
+    canExpand: true,
   },
   {
     name: 'Gingerbread',
@@ -172,7 +165,9 @@ const rows = ref([
     protein: 3.9,
     sodium: 327,
     calcium: '7%',
-    iron: '16%'
+    iron: '16%',
+    id: 11,
+    canExpand: false,
   },
   {
     name: 'Jelly bean',
@@ -182,7 +177,9 @@ const rows = ref([
     protein: 0.0,
     sodium: 50,
     calcium: '0%',
-    iron: '0%'
+    iron: '0%',
+    id: 12,
+    canExpand: false,
   },
   {
     name: 'Lollipop',
@@ -192,7 +189,9 @@ const rows = ref([
     protein: 0,
     sodium: 38,
     calcium: '0%',
-    iron: '2%'
+    iron: '2%',
+    id: 13,
+    canExpand: true,
   },
   {
     name: 'Honeycomb',
@@ -202,7 +201,9 @@ const rows = ref([
     protein: 6.5,
     sodium: 562,
     calcium: '0%',
-    iron: '45%'
+    iron: '45%',
+    id: 14,
+    canExpand: false,
   },
   {
     name: 'Donut',
@@ -212,7 +213,9 @@ const rows = ref([
     protein: 4.9,
     sodium: 326,
     calcium: '2%',
-    iron: '22%'
+    iron: '22%',
+    id: 15,
+    canExpand: false,
   },
   {
     name: 'KitKat',
@@ -222,7 +225,9 @@ const rows = ref([
     protein: 7,
     sodium: 54,
     calcium: '12%',
-    iron: '6%'
+    iron: '6%',
+    id: 16,
+    canExpand: false,
   }
 ]);
 

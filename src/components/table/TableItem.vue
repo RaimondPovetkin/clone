@@ -1,14 +1,16 @@
 <template>
-  <tr class="tr-class">
-    <td class="text-left">
+  <tr style="transition: all 1s;">
+    <td class="text-left" style="transition: all 1s;">
       <!-- <span>{{level}}</span> -->
 
         <q-icon v-if="item.subItems" name="arrow_drop_down" />
 
       <span :style="'padding-left:' + (level * 20) + 'px'">{{item.fat}}</span>
 
-      <q-btn v-if="!item.subItems" size="xs" @click="addItemThis"><q-icon name="add" /></q-btn>
+      <q-btn v-if="item.canExpand" size="xs" @click="addItemThis(item)"><q-icon name="add" /></q-btn>
       {{ level }}<span></span>
+      <q-btn v-if="item.subItems" size="xs" @click="removeItemThis(item)"><q-icon name="remove" /></q-btn>
+      {{ item.isHided }}
 
     </td>
     <td class="text-right">{{item.calories}}</td>
@@ -19,11 +21,13 @@
   </tr>
 
     <TableItem
-      v-for="(i,index) in item.subItems"
+      v-for="(i,index) in item.isHided ? [] : item.subItems"
       :item="i"
       :key="index"
       :level="level +1"
-    >
+      @addItem="addItemThis"
+      @removeItem="removeItemThis"
+      >
     </TableItem>
 
 
@@ -34,36 +38,22 @@
 import { ref } from 'vue';
 import TableItem from 'src/components/table/TableItem.vue';
 
-const emit = defineEmits(['addItem'])
+const emit = defineEmits(['addItem','removeItem'])
 
-function addItemThis(){
-  console.log(props.item)
-  props.item.subItems = [
-      {
-      name: 'Eclair',
-      calories: 262,
-      fat: 16.0,
-      carbs: 23,
-      protein: 6.0,
-      sodium: 337,
-      calcium: '6%',
-      iron: '7%',
-      children: 10
-    },
-    {
-      name: 'Cupcake',
-      calories: 305,
-      fat: 3.7,
-      carbs: 67,
-      protein: 4.3,
-      sodium: 413,
-      calcium: '3%',
-      iron: '8%'
-    },
-  ]
+function addItemThis(item){
+  emit('addItem',item)
+}
+
+function removeItemThis(item){
+  emit('removeItem',item)
 }
 
 const props = defineProps({
+  hidedItems: {
+    type: Array,
+    required: false,
+    default: ()=>{[]}
+  },
   item: {
     type: Object,
     required: false,
@@ -79,6 +69,6 @@ const props = defineProps({
 </script>
 <style lang="scss">
 .tr-class{
-  transition: display 0.3 s ease;
+  transition: all 1s;
 }
 </style>
